@@ -1,0 +1,40 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[ICS_gtEntRfPndngLst]
+	@vno NVARCHAR(100),
+	@loggeduser NVARCHAR(100),
+	@iDocdate varchar(20),
+	@iBookNo varchar(20),
+	@Branch varchar(20),
+	@StrVtypes varchar(max)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	DECLARE @sabbr as NVARCHAR(256)
+	DECLARE @vtype as NVARCHAR(256)
+	declare @LinkId as varchar(20)  
+	DECLARE @strsql as NVARCHAR(max)
+	
+    -- Insert statements for procedure here
+
+DECLARE @sql_xml XML = Cast('<root><U>'+ Replace(@StrVtypes, ',', '</U><U>')+ '</U></root>' AS XML)
+DECLARE vtype_Cursor CURSOR FOR  
+SELECT f.x.value('.', 'varchar(100)') AS vtype FROM @sql_xml.nodes('/root/U') f(x);
+OPEN vtype_Cursor;
+FETCH NEXT FROM vtype_Cursor INTO @sabbr;
+WHILE @@FETCH_STATUS = 0  
+   BEGIN  
+		Select @vtype=iVoucherType from [dbo].[cCore_Vouchers_0] where sabbr=@sabbr		  
+	    set @strsql = 'insert into ICSgtEntRfPndngLst(vno,loggeduser,VoucherNo,iDate,sName,Abbr,AbbrNo) select distinct ''' + @vno + ''',''' +  @loggeduser +  ''',sVoucherNo,iDate,VoucherName,sabbr,sVoucherNo + '':'' + sabbr  from vIcs_PndngLst where status in (''Pending'',''Partial Consumed'') and iVouchertype=' + @vtype + ' and  branch=' + @Branch + ' and account=' + @iBookNo + ' and iDate<=' + @iDocdate + ' and bBase=1';
+		--print @strsql; 
+		execute(@strsql);
+	   FETCH NEXT FROM vtype_Cursor INTO @sabbr;  
+   END;  
+CLOSE vtype_Cursor;  
+DEALLOCATE vtype_Cursor;  
+--Select [Abbr] +':'+ [VoucherNo]  as VoucherNo, dbo.IntToDate(iDate) as DocDate from ICS_gtEntRfPndngLst 
+END

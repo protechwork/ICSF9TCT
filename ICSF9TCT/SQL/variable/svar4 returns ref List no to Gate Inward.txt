@@ -1,0 +1,22 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+--&#sqlsf4
+--returns ref List no to Gate Inward
+ALTER Function [dbo].[fCore_svar4](@a xml) returns nvarchar(30)
+begin
+declare @SelectRefDocNo nvarchar(30)
+declare @tagSelectRefDocNo int 
+declare @txtSelectRefDocNo nvarchar(30)
+Select @SelectRefDocNo = @a.value('(/Transaction/HeaderExtra/IdNamePair/Name)[6]','nvarchar(30)')
+if (@SelectRefDocNo <> '') 
+begin 
+	Select @tagSelectRefDocNo = @a.value('(/Transaction/HeaderExtra/IdNamePair/Tag)[6]','int')
+end 
+if (@tagSelectRefDocNo!= 0) 
+begin
+	select @txtSelectRefDocNo=AbbrNo from ICSgtEntRfPndngLst where id=@tagSelectRefDocNo
+end 
+return @txtSelectRefDocNo;
+end
