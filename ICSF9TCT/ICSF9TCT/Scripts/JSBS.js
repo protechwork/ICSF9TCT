@@ -919,7 +919,100 @@ function GRNRMOtherFldsPassfieldValueCallback(response) {
     }
 }
 
+//#region Before Save For Get Max FG Qty For RecoItem
+function GetMaxFGLst(logDetails, rowIndex) {
+    Focus8WAPI.getFieldValue("GetMaxFGLstPassfieldValueCallback", ["", "DocNo", "Date", "CustomerAC", "Unit Location", "DCRecoItem","TotalDCQty"], Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, false, ++requestId)
+    //Focus8WAPI.getFieldValue("GetMaxFGLstPassfieldValueCallback", ["", "*"], Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, false, ++requestId)
+    debugger;
+}
+function GetMaxFGLstPassfieldValueCallback(response) {
 
+    try {
+       
+        if (isRequestCompleted(response.iRequestId, requestsProcessed)) {
+            return;
+        }
+        requestsProcessed.push(response.iRequestId);
+        debugger;
+        logDetails = response.data[0];
+        
+         console.log(logDetails)
+        debugger;
+        DocNo = response.data[1].FieldValue;  
+        iDocDate = response.data[2].FieldValue;
+        Vendor = response.data[3].FieldValue;
+        UnitLocation = response.data[4].FieldValue;
+        item= response.data[5].FieldValue;
+        DCQty = response.data[6].FieldValue;
+        //CID = response.data[0].CompanyId;
+        //SessID = response.data[0].SessionId;
+        //UserName = response.data[0].CompanyId;
+        debugger;
+        console.log(DocNo);
+
+        //debugger;
+
+        //Focus8WAPI.getBodyFieldValue("PassSbodyCallbackBeforeSave", [""], Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, false, 1, ++requestId)
+        if (DCQty >0) {
+        
+            var url = `/ICSF9TCT/LDCJWSal/GetMaxFGLst?CompanyId=${logDetails.CompanyId}&item=${item}&UnitLocation=${UnitLocation}&Vendor=${Vendor}&User=${logDetails.UserName}&SessionId=${logDetails.SessionId}&LoginId=${logDetails.LoginId}&vtype=${logDetails.iVoucherType}&DocNo=${DocNo}&iDocDate=${iDocDate}&DCQty=${DCQty}`;
+            console.log({ logDetails, DocNo, url })
+            //alert(url);
+            debugger;
+            //Focus8WAPI.openPopup(url, openPopupCallBackBeforeSave);
+            $.ajax({
+                type: "POST",
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                //   async: false,
+                success: function (r) {
+                    debugger;
+                    //res = JSON.stringify(r);//
+
+                    // start exporting notepad
+                    res = JSON.stringify(r);
+                    if (r.data.message == "")
+                    {
+                        alert("Posted Successfully");
+                    }
+                    else
+                    {                    
+                        //Convert Byte Array to BLOB.
+                        var blob = new Blob([r.data.json_data], { type: "application/octetstream" });
+
+
+                        //Check the Browser type and download the File.
+                        var isIE = false || !!document.documentMode;
+                        if (isIE) {
+                            window.navigator.msSaveBlob(blob, docNo + "-" + new Date().getHours()+ "-" +  new Date().getMinutes() + "-Einvoice.json");
+                        } else {
+                            var url = window.URL || window.webkitURL;
+                            link = url.createObjectURL(blob);
+                            var a = $("<a />");                        
+                            a.attr("download", DocNo + ".txt");
+                            a.attr("href", link);
+                            $("body").append(a);
+                            a[0].click();
+                            $("body").remove(a);
+                        }
+                    }
+                    
+                    Focus8WAPI.continueModule(Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, true);
+                },
+                error: function (e) {
+                    console.log(e.message)
+                    Focus8WAPI.continueModule(Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, false);
+                }
+
+            });
+
+        }
+
+    } catch (e) {
+        console.log("headerCallback", e.message)
+    }
+}
+//#endregion
 
 
 function toMoney(value, format = "en-IN", options = { minimumFractionDigits: 2, maximumFractionDigits: 2 }) {

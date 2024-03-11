@@ -40,6 +40,79 @@ function isRequestProcessed(iRequestId) {
         }
     } return false;
 }
+
+//#region Afer Save Function DCJWSal Dated 27-02-2024 
+function AfterSaveDCJWSal(loginDetails, rowIndex) {
+    //alert(loginDetails);	
+    debugger;
+    requestId = 0;
+    requestsProcessed = [];
+    Focus8WAPI.getFieldValue("fieldValueCallbackIssueAfterSaveDCJWSal", ["", "DocNo", "Date"], Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, false, requestId++);
+
+}
+function fieldValueCallbackIssueAfterSaveDCJWSal(response) {
+    debugger;
+    try {
+
+        if (isRequestCompleted(response.iRequestId, requestsProcessed)) {
+            return;
+        }
+        requestsProcessed.push(response.iRequestId);
+        debugger;
+        logDetails = response.data[0];
+        docNo = response.data[1].FieldValue;
+        docDate = response.data[2].FieldValue;
+
+
+        var data = {
+            CompanyId: logDetails.CompanyId,
+            SessionId: logDetails.SessionId,
+            User: logDetails.UserName,
+            LoginId: logDetails.LoginId,
+            vtype: logDetails.iVoucherType,
+            docNo: docNo,
+            BodyData: bodyData
+
+        };
+
+        console.log({ data })
+        $.ajax({
+            type: "POST",
+            url: "/ICSF9TCT/LDCJWSal/UpdateDCJWSal",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (r) {
+                debugger
+                res = JSON.stringify(r);
+
+
+                //alert(res.message);
+                alert(r.data.message);
+                //alert(r.message);
+
+                // alert(r.status);
+
+                Focus8WAPI.continueModule(Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, true);
+            },
+            error: function (e) {
+                console.log(e.message)
+                Focus8WAPI.continueModule(Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, false);
+            }
+
+        });
+
+
+        //Focus8WAPI.getBodyFieldValue("PEbodyCallbackAfterSave", ["Item", "Quantity", "Rate", "Gross", "PartyBatchNo", "ItemRemarks"], Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, false, 1, requestId++)
+        //Focus8WAPI.getBodyFieldValue("PEbodyCallbackAfterSave", ["Item", "Quantity", "Rate", "Gross", "PartyBatchNo", "ItemRemarks"], Focus8WAPI.ENUMS.MODULE_TYPE.TRANSACTION, false, 1, requestId++)
+
+
+    } catch (e) {
+        console.log("fieldValueCallbacksupplierValidate", e.message)
+    }
+}
+//#endregion
+
 //Afer Save Function AnxJWSale dated 23-02-2023
 function ASAnxJWSale(loginDetails, rowIndex) {
     //alert(loginDetails);	

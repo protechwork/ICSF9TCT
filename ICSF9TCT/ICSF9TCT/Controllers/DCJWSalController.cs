@@ -63,10 +63,19 @@ namespace ICSF9TCT.Controllers
                     strQry = $@"SELECT  sName  FROM  dbo.cCore_Vouchers_0 WHERE (iVoucherType ='" + vPVtype + "')";
                     vPName = Convert.ToString(clsGeneric.ShowRecord(CompanyId, strQry));
 
-                    strQry = $@" SELECT DISTINCT CH.iDate, CD.iFaTag UnitLocation, CD.iBookNo Vendor, tci.iProduct FGID, abs(tci.fQuantity) PlanQty,tci.mRate, tci.mGross, CHD.PONo, CHD.PODate, CHD.sNarration, CHD.Price, CHD.PackandForwd, CHD.FreightTerm, CHD.DeliveryTerms, CHD.Insurance  " +
+
+                    //strQry = $@" SELECT DISTINCT CH.iDate, CD.iFaTag UnitLocation, CD.iBookNo Vendor, tci.iProduct FGID, abs(tci.fQuantity) PlanQty,tci.mRate, tci.mGross, CHD.PONo, CHD.PODate, CHD.sNarration, CHD.Price, CHD.PackandForwd, CHD.FreightTerm, CHD.DeliveryTerms, CHD.Insurance  " +
+                    //" FROM dbo.tCore_Header_0 AS CH INNER JOIN dbo.tCore_Data_0 AS CD ON CH.iHeaderId = CD.iHeaderId INNER JOIN " +
+                    //" dbo.tCore_Indta_0 AS tci ON CD.iBodyId = tci.iBodyId INNER JOIN dbo.tCore_HeaderData" + vtype + "_0 AS CHD ON CD.iHeaderId = CHD.iHeaderId " +
+                    //" WHERE     (CH.iVoucherType =" + vtype + ") AND (CH.sVoucherNo = N'" + docNo + "')";
+                    //Add New Field RecoItem in DC Job Work Sales Body Reconcile as per RecoItem
+
+                    strQry = $@" SELECT DISTINCT CH.iDate, CD.iFaTag UnitLocation, CD.iBookNo Vendor, tBody.RecoItem FGID, abs(tci.fQuantity) PlanQty,tci.mRate, tci.mGross, CHD.PONo, CHD.PODate, CHD.sNarration, CHD.Price, CHD.PackandForwd, CHD.FreightTerm, CHD.DeliveryTerms, CHD.Insurance  " +
                     " FROM dbo.tCore_Header_0 AS CH INNER JOIN dbo.tCore_Data_0 AS CD ON CH.iHeaderId = CD.iHeaderId INNER JOIN " +
-                    " dbo.tCore_Indta_0 AS tci ON CD.iBodyId = tci.iBodyId INNER JOIN dbo.tCore_HeaderData" + vtype + "_0 AS CHD ON CD.iHeaderId = CHD.iHeaderId " +
+                    " dbo.tCore_Indta_0 AS tci ON CD.iBodyId = tci.iBodyId INNER JOIN dbo.tCore_HeaderData" + vtype + "_0 AS CHD ON CD.iHeaderId = CHD.iHeaderId INNER JOIN " +
+                    " dbo.tCore_Data" + vtype + "_0 AS tBody ON CD.iBodyId = tBody.iBodyId " +
                     " WHERE     (CH.iVoucherType =" + vtype + ") AND (CH.sVoucherNo = N'" + docNo + "')";
+
                     clsGeneric.writeLog("strQry:" + strQry);
                     DataSet ds = DataAcesslayer.GetData(strQry, CompanyId, ref strErrorMessage);
                     clsGeneric.writeLog("Getting from Voucher:" + (ds));

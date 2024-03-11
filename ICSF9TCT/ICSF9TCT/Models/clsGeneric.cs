@@ -268,8 +268,6 @@ namespace ICSF9TCT.Models
 
             }
         }
-
-
         public static void createICSPendingGRNRMQC(int companyId, string User, string Vno)
         {
 
@@ -301,8 +299,125 @@ namespace ICSF9TCT.Models
             }
         }
 
+        public static void createTableRMReqQtySAL(int companyId, string User, string Vno)
+        {
 
 
+            BL_DB objDB = new BL_DB();
+            string strQry = "";
+            string error = "";
+            DataTable dt = new DataTable();
+            strQry = "select * from sysObjects where name='RMReqQtySAL'";
+            dt = objDB.GetData(strQry, companyId, ref error).Tables[0];
+            if (dt.Rows.Count <= 0)
+            {
+
+                strQry = $@"create table RMReqQtySAL(ID INT IDENTITY(1, 1) primary key,FgId int,FgQty DECIMAL(14,6) Default 0,GRNJW_FGQty DECIMAL(14,6) Default 0,rmid int, rmqty DECIMAL(14,6) Default 0,ScrapId int,ScrapQty DECIMAL(14,6) Default 0,batchid int, batchname varchar(100), bMfDate int, bfrate DECIMAL(14,6) Default 0,TaxCode bigint Default 0,vno varchar(50), loggeduser varchar(50))";
+                objDB.GetExecute(strQry, companyId, ref error);
+
+                clsGeneric.writeLog("create Query RMReqQtySAL: " + strQry);
+
+
+            }
+            else
+            {
+                strQry = $@"delete from RMReqQtySAL where vno='" + Vno + "' and loggeduser='" + User + "'";
+                objDB.GetExecute(strQry, companyId, ref error);
+
+                clsGeneric.writeLog("delete Query RMReqQtySAL: " + strQry);
+
+
+            }
+        }
+
+        public static void createTablelinkinfoSAL(int companyId, string User, string Vno)
+        {
+
+
+            BL_DB objDB = new BL_DB();
+            string strQry = "";
+            string error = "";
+            DataTable dt = new DataTable();
+            strQry = "select * from sysObjects where name='linkinfoSAL'";
+            dt = objDB.GetData(strQry, companyId, ref error).Tables[0];
+            if (dt.Rows.Count <= 0)
+            {
+
+                strQry = $@"create table linkinfoSAL (liid int primary Key identity(1,1), iHeaderId int Default 0, iDate bigint Default 0, sVoucherNo varchar(100), Balance DECIMAL(14,6) Default 0, iTransactionId int Default 0, iProduct int Default 0, mrate DECIMAL(14,6) Default 0, iRefId int Default 0, iInvTag int Default 0, iBookNo int Default 0, VendorWarehouse int, iVoucherType int, ConsumedQty DECIMAL(14,6) Default 0,BatchId int Default 0,BatchNo varchar(100) ,BMfDate int,Brate DECIMAL(14,6) Default 0,Process int default 0, WorksCenter int default 0,Dept int default 0, TaxCode int default 0,DCNo varchar(50),DCDate int,vno varchar(50), loggeduser varchar(50))";
+                objDB.GetExecute(strQry, companyId, ref error);
+                clsGeneric.writeLog("create Query linkinfoSAL : " + strQry);
+
+
+            }
+            else
+            {
+                strQry = $@"delete from linkinfoSAL where vno='" + Vno + "' and loggeduser='" + User + "'";
+                objDB.GetExecute(strQry, companyId, ref error);
+                clsGeneric.writeLog("delete Query linkinfoSAL : " + strQry);
+
+
+            }
+        }
+
+        public static void createTablelinkrmusedSAL(int companyId, string User, string Vno)
+        {
+
+            BL_DB objDB = new BL_DB();
+            string strQry = "";
+            string error = "";
+            DataTable dt = new DataTable();
+            strQry = "select * from sysObjects where name='linkrmusedSAL'";
+            dt = objDB.GetData(strQry, companyId, ref error).Tables[0];
+            if (dt.Rows.Count <= 0)
+            {
+
+                strQry = $@"create table linkrmusedSAL(liid int, UsedQty DECIMAL(14,6) Default 0, RunningLDocQty DECIMAL(14,6) Default 0,fgid int, fgqty DECIMAL(14,6) Default 0,fgrate DECIMAL(14,6) Default 0,vno varchar(50), loggeduser varchar(50))";
+                objDB.GetExecute(strQry, companyId, ref error);
+
+                clsGeneric.writeLog("create Query linkrmusedSAL: " + strQry);
+
+
+            }
+            else
+            {
+                strQry = $@"delete from linkrmusedSAL where vno='" + Vno + "' and loggeduser='" + User + "'";
+                objDB.GetExecute(strQry, companyId, ref error);
+                clsGeneric.writeLog("delete Query linkrmusedSAL: " + strQry);
+
+
+            }
+        }
+
+        public static void createTableTempRMFG_DCJWSal(int companyId, string iuser, string Vno)
+        {
+
+
+            BL_DB objDB = new BL_DB();
+            string strQry = "";
+            string error = "";
+            DataTable dt = new DataTable();
+            strQry = "select * from sysObjects where name='TempRMFG_DCJWSal'";
+            dt = objDB.GetData(strQry, companyId, ref error).Tables[0];
+            if (dt.Rows.Count <= 0)
+            {
+
+                strQry = $@"create table TempRMFG_DCJWSal (id bigint identity(1,1),iRowId bigint Default 0,FGRowNo bigint Default 0,GrdRowNo bigint Default 0,iBodyId bigint Default 0,RMId bigint Default 0,BoMQty DECIMAL(14,6) Default 0,FgId bigint,FgQty DECIMAL(14,6) Default 0,LinkQty DECIMAL(14,6) Default 0,reqQty DECIMAL(14,6) Default 0,RMMaxQty DECIMAL(14,6) Default 0,FGMaxQty DECIMAL(14,6) Default 0,vno varchar(50), loggeduser varchar(50))";
+                objDB.GetExecute(strQry, companyId, ref error);
+                clsGeneric.writeLog("error " + error);
+                clsGeneric.writeLog("Create Query TempRMFG_DCJWSal: " + strQry);
+
+
+            }
+            else
+            {
+                strQry = $@"delete from TempRMFG_DCJWSal where loggeduser='" + iuser + "'";
+                objDB.GetExecute(strQry, companyId, ref error);
+                clsGeneric.writeLog("error " + error);
+                clsGeneric.writeLog("delete Query TempRMFG_DCJWSal: " + strQry);
+
+
+            }
+        }
 
         // start PPCPlanRMReq
         public static void createTableCollectSFG_PPCPlanRMReq(int companyId, string User, string Vno)
@@ -432,5 +547,34 @@ namespace ICSF9TCT.Models
 
         #endregion
 
+
+        public static void createICSDCJWSalLst(int companyId, string User, string Vno)
+        {
+
+
+            BL_DB objDB = new BL_DB();
+            string strQry = "";
+            string error = "";
+            DataTable dt = new DataTable();
+            strQry = "select * from sysObjects where name='ICSDCJWSalLst'";
+            dt = objDB.GetData(strQry, companyId, ref error).Tables[0];
+            if (dt.Rows.Count <= 0)
+            {
+                strQry = $@"CREATE TABLE ICSDCJWSalLst (iFgId bigint default 0, iRMId bigint default 0, dRMBOMQty Decimal(18, 6) default 0,  dFGBOMQty Decimal(18, 6) default 0, dGRNJWSalQty Decimal(18, 6) default 0, dAnxJWSaleQty Decimal(18, 6) default 0, dRetJWSaleQty Decimal(18, 6) default 0, loggeduser varchar(50))";
+                //strQry = $@"CREATE TABLE ICSgtEntRfPndngLst([id] [int] IDENTITY(1,1) Primary key NOT NULL,[VoucherNo] [varchar](100) NULL,[iDate] int NULL,[sName] [varchar](1000) NULL, [AbbrNo] [varchar](150) NULL, [Abbr] [varchar](100) NULL, vno varchar(100), loggeduser varchar(50))";
+                objDB.GetExecute(strQry, companyId, ref error);
+                clsGeneric.writeLog("Query : " + strQry);
+                clsGeneric.writeLog("s1");
+
+            }
+            else
+            {
+                strQry = $@"delete from ICSDCJWSalLst where loggeduser='" + User + "'";
+                objDB.GetExecute(strQry, companyId, ref error);
+                clsGeneric.writeLog("delete Query : " + strQry);
+                clsGeneric.writeLog("s2");
+
+            }
+        }
     }
 }
